@@ -781,7 +781,7 @@ $('#previewStyleReset').addEventListener('click',()=>{
   toast('Gaya pratinjau kembali mengikuti palet.','info');
 });
 
-const feedbackForm=$('#feedbackForm'),feedbackFile=$('#feedbackScreenshot'),feedbackFrame=$('#feedbackFrame');
+const feedbackForm=$('#feedbackForm'),feedbackFile=$('#feedbackScreenshot');
 const feedbackStatus=$('#feedbackStatus'),feedbackSubmit=$('#feedbackSubmit');
 let feedbackPending=false,feedbackTimer;
 let feedbackEndpoint='';
@@ -844,7 +844,7 @@ feedbackForm.addEventListener('submit',async event=>{
     feedbackTimer=setTimeout(()=>{
       if(!feedbackPending)return;
       feedbackPending=false;feedbackSubmit.disabled=false;clearFeedbackPayload();
-      setFeedbackStatus('Belum ada konfirmasi dari layanan email. Periksa koneksi, lalu coba kembali.',true);
+      setFeedbackStatus('Konfirmasi belum diterima. Periksa email Anda sebelum mencoba mengirim ulang.',true);
     },45000);
   }catch(error){
     feedbackPending=false;feedbackSubmit.disabled=false;clearFeedbackPayload();
@@ -852,7 +852,7 @@ feedbackForm.addEventListener('submit',async event=>{
   }
 });
 window.addEventListener('message',event=>{
-  if(event.source!==feedbackFrame.contentWindow)return;
+  if(!feedbackPending)return;
   if(event.origin!=='https://script.google.com'&&!event.origin.endsWith('.googleusercontent.com'))return;
   if(!event.data||event.data.type!=='chromara-feedback-result')return;
 
