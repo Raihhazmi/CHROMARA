@@ -27,6 +27,7 @@
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
 body{background:var(--bg);color:var(--text);font:400 15px/1.65 var(--fb);overflow-x:hidden;min-height:100vh;transition:background .5s,color .5s}
+body.intro-active{overflow:hidden}
 ::selection{background:var(--accent);color:var(--on-accent)}
 *{scrollbar-width:thin;scrollbar-color:var(--accent) var(--surface)}
 ::-webkit-scrollbar{width:10px;height:10px}
@@ -51,6 +52,34 @@ body[data-theme="light"] .bg-mesh i{opacity:.3}
 .grain{position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.06;mix-blend-mode:overlay;transition:opacity .4s;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");background-size:160px}
 body.no-grain .grain{opacity:0}
+
+.intro-screen{position:fixed;inset:0;z-index:1000;display:grid;place-items:center;overflow:hidden;padding:24px;background:var(--bg);color:var(--heading);transition:opacity .55s ease,visibility .55s ease}
+.intro-screen::before{content:'';position:absolute;inset:-20%;background:radial-gradient(ellipse at 50% 45%,rgba(0,90,156,.22),transparent 42%),radial-gradient(ellipse at 50% 100%,rgba(245,184,74,.1),transparent 38%);pointer-events:none}
+.intro-screen.is-leaving{opacity:0;visibility:hidden;pointer-events:none}
+.intro-inner{position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;gap:15px}
+.intro-brand{display:flex;align-items:center;gap:18px;animation:introBrand .9s cubic-bezier(.2,.7,.2,1) both}
+.intro-mark{width:68px;height:68px;filter:drop-shadow(0 10px 24px rgba(96,193,229,.24));animation:introMark 1.1s cubic-bezier(.2,.7,.2,1) both}
+.intro-wordmark{font:700 clamp(2rem,7vw,3.8rem)/1 var(--fd);letter-spacing:.08em;white-space:nowrap}
+.intro-wordmark em{font-style:normal;color:var(--gold)}
+.intro-tagline{font:600 10px var(--fm);letter-spacing:.32em;text-transform:uppercase;color:var(--muted);animation:introFade .65s .25s both}
+.intro-rule{width:min(190px,52vw);height:2px;border-radius:99px;background:var(--track);overflow:hidden}
+.intro-rule i{display:block;width:100%;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--accent),var(--gold));transform:scaleX(0);transform-origin:left;animation:introLoad 1.35s .2s cubic-bezier(.2,.7,.2,1) forwards}
+.intro-skip{position:absolute;left:50%;bottom:28px;transform:translateX(-50%);padding:8px 14px;border:1px solid var(--border);border-radius:99px;background:var(--surface);color:var(--muted);font:600 11px var(--fb);cursor:pointer;transition:color .2s,border-color .2s}
+.intro-skip:hover{color:var(--heading);border-color:var(--accent)}
+@keyframes introBrand{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes introMark{0%{opacity:0;transform:rotate(-30deg) scale(.58)}70%{opacity:1;transform:rotate(8deg) scale(1.08)}100%{transform:rotate(0) scale(1)}}
+@keyframes introFade{from{opacity:0;letter-spacing:.48em}to{opacity:1;letter-spacing:.32em}}
+@keyframes introLoad{to{transform:scaleX(1)}}
+@media (max-width:640px){
+  .intro-brand{gap:12px}
+  .intro-mark{width:52px;height:52px}
+  .intro-wordmark{letter-spacing:.04em}
+  .intro-tagline{font-size:9px}
+}
+@media (prefers-reduced-motion:reduce){
+  .intro-screen{display:none}
+  .intro-brand,.intro-mark,.intro-tagline,.intro-rule i{animation:none}
+}
 
 #nav{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--nav-bg);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--border);transition:background .5s}
 .nav-in{max-width:1300px;margin:0 auto;padding:0 22px;height:var(--nav-h);display:flex;align-items:center;gap:16px}
@@ -490,6 +519,23 @@ body{
 <body data-theme="dark">
 <div class="bg-mesh" aria-hidden="true"><i class="m1"></i><i class="m2"></i><i class="m3"></i><i class="m4"></i></div>
 <div class="grain" aria-hidden="true"></div>
+<div class="intro-screen" id="introScreen" role="dialog" aria-modal="true" aria-labelledby="introTitle">
+  <div class="intro-inner">
+    <div class="intro-brand">
+      <svg class="intro-mark" viewBox="0 0 32 32" aria-hidden="true">
+        <path d="M16 2 30 16 16 16Z" fill="var(--c2)"/>
+        <path d="M16 2 2 16 16 16Z" fill="var(--c1)"/>
+        <path d="M16 30 30 16 16 16Z" fill="var(--c3)"/>
+        <path d="M16 30 2 16 16 16Z" fill="var(--c0)"/>
+        <circle cx="16" cy="16" r="3.4" fill="var(--gold)"/>
+      </svg>
+      <h1 class="intro-wordmark" id="introTitle">CHROM<em>ARA</em></h1>
+    </div>
+    <p class="intro-tagline">Studio Rasio Warna</p>
+    <div class="intro-rule" aria-hidden="true"><i></i></div>
+  </div>
+  <button class="intro-skip" id="introSkip" type="button">Lewati animasi</button>
+</div>
 
 <header id="nav">
   <div class="nav-in">
@@ -1622,8 +1668,33 @@ dropBtn.addEventListener('click',()=>{
 const menuBtn=$('#menuBtn'),navLinks=$('#navLinks');
 menuBtn.addEventListener('click',()=>{const o=navLinks.classList.toggle('open');menuBtn.classList.toggle('open',o);menuBtn.setAttribute('aria-expanded',String(o));});
 $$('#navLinks a').forEach(a=>a.addEventListener('click',()=>{navLinks.classList.remove('open');menuBtn.classList.remove('open');menuBtn.setAttribute('aria-expanded','false');}));
+const introScreen=$('#introScreen'),introSkip=$('#introSkip');
+let introTimer,introDismissed=false;
+function dismissIntro(restoreFocus){
+  if(introDismissed||!introScreen.isConnected)return;
+  introDismissed=true;clearTimeout(introTimer);introScreen.classList.add('is-leaving');
+  const release=()=>{
+    if(!introScreen.isConnected)return;
+    body.classList.remove('intro-active');
+    [$('#nav'),$('main'),$('footer')].forEach(el=>{el.inert=false;});
+    introScreen.remove();
+    if(restoreFocus)$('.brand').focus({preventScroll:true});
+  };
+  introScreen.addEventListener('transitionend',release,{once:true});
+  setTimeout(release,700);
+}
+introSkip.addEventListener('click',()=>dismissIntro(true));
+if(!state.motion||(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)){
+  introDismissed=true;introScreen.remove();
+}else{
+  body.classList.add('intro-active');
+  [$('#nav'),$('main'),$('footer')].forEach(el=>{el.inert=true;});
+  introSkip.focus({preventScroll:true});
+  introTimer=setTimeout(()=>dismissIntro(false),1800);
+}
 document.addEventListener('keydown',e=>{
-  if(e.key==='Escape'){navLinks.classList.remove('open');menuBtn.classList.remove('open');menuBtn.setAttribute('aria-expanded','false');}
+  if(!introDismissed&&e.key==='Tab'){e.preventDefault();introSkip.focus();return;}
+  if(e.key==='Escape'){dismissIntro(true);navLinks.classList.remove('open');menuBtn.classList.remove('open');menuBtn.setAttribute('aria-expanded','false');}
   if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){const tag=(e.target.tagName||'').toLowerCase();
     if(tag!=='input'&&tag!=='textarea'){e.preventDefault();doUndo();}}
 });
