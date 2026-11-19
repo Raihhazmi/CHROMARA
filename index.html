@@ -418,17 +418,44 @@
 
 <section id="masukan">
   <div class="wrap">
-    <div class="feedback-card card reveal">
-      <div class="feedback-copy">
-        <span class="kicker">05 · SUARA ANDA</span>
-        <h2 class="sec-title">Masukan Anda Berarti</h2>
-        <p class="sec-sub">Punya saran, menemukan kendala, atau ide untuk CHROMARA? Kirimkan masukan melalui Gmail. Setiap masukan membantu kami meningkatkan pengalaman penggunaan.</p>
-        <p class="feedback-email">Dikirim ke <a href="mailto:raihanazmi.official@gmail.com">raihanazmi.official@gmail.com</a></p>
-      </div>
-      <a class="btn btn-p feedback-btn" href="https://mail.google.com/mail/?view=cm&amp;fs=1&amp;to=raihanazmi.official%40gmail.com&amp;su=Masukan%20untuk%20CHROMARA&amp;body=Halo%20tim%20CHROMARA%2C%0A%0ASaya%20ingin%20menyampaikan%20masukan%20mengenai%20CHROMARA.%0A%0AMasukan%20saya%3A%0A%0A%0ATerima%20kasih." target="_blank" rel="noopener noreferrer">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
-        Kirim masukan via Gmail
-      </a>
+    <div class="feedback-card reveal">
+      <header class="feedback-heading">
+        <span class="kicker">05 · FORM MASUKAN</span>
+        <h2 class="sec-title">Kritik &amp; Saran</h2>
+        <p class="sec-sub">Masukan Anda membantu kami membuat CHROMARA lebih baik. Pilih kategori dan ceritakan pengalaman Anda dengan singkat.</p>
+      </header>
+      <form class="feedback-form" id="feedbackForm" method="post" target="feedbackFrame" enctype="application/x-www-form-urlencoded">
+        <div class="feedback-field">
+          <label for="feedbackCategory">Kategori</label>
+          <select id="feedbackCategory" name="category" required>
+            <option value="" selected disabled>Pilih kategori</option>
+            <option value="Lapor Error/Bug">Lapor Error/Bug</option>
+            <option value="Saran Fitur">Saran Fitur</option>
+            <option value="Masalah Tampilan">Masalah Tampilan</option>
+            <option value="Lainnya">Lainnya</option>
+          </select>
+        </div>
+        <div class="feedback-field">
+          <label for="feedbackMessage">Pesan / Keluhan <span class="required-mark">Wajib</span></label>
+          <textarea id="feedbackMessage" name="message" rows="5" maxlength="3000" placeholder="Ceritakan kekurangan, masalah, atau saran Anda…" required></textarea>
+        </div>
+        <div class="feedback-field">
+          <span class="feedback-label">Upload Screenshot</span>
+          <label class="feedback-dropzone" for="feedbackScreenshot">
+            <input id="feedbackScreenshot" type="file" accept="image/png,image/jpeg,image/webp">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+            <span id="feedbackFileName">Tambahkan screenshot (opsional)</span>
+            <small>PNG, JPG, atau WebP · Maksimal 3 MB</small>
+          </label>
+        </div>
+        <div class="feedback-field">
+          <label for="feedbackContact">Email / Kontak</label>
+          <input id="feedbackContact" name="contact" type="text" maxlength="160" placeholder="Isi jika ingin dihubungi kembali setelah masalah diperbaiki">
+        </div>
+        <button class="btn btn-p feedback-submit" id="feedbackSubmit" type="submit">Kirim</button>
+        <p class="feedback-note">Pesan yang dikirim akan masuk langsung ke email pengelola.</p>
+        <p class="feedback-status" id="feedbackStatus" role="status" aria-live="polite" hidden></p>
+      </form>
     </div>
   </div>
 </section>
@@ -441,7 +468,9 @@
   </div>
 </footer>
 <div id="toasts" aria-live="polite"></div>
+<iframe id="feedbackFrame" name="feedbackFrame" title="Status pengiriman masukan" hidden></iframe>
 
+<script src="feedback-config.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

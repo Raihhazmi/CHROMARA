@@ -781,6 +781,90 @@ $('#previewStyleReset').addEventListener('click',()=>{
   toast('Gaya pratinjau kembali mengikuti palet.','info');
 });
 
+const feedbackForm=$('#feedbackForm'),feedbackFile=$('#feedbackScreenshot'),feedbackFrame=$('#feedbackFrame');
+const feedbackStatus=$('#feedbackStatus'),feedbackSubmit=$('#feedbackSubmit');
+let feedbackPending=false,feedbackTimer;
+let feedbackEndpoint='';
+try{
+  const endpoint=new URL(window.CHROMARA_FEEDBACK_ENDPOINT||'');
+  if(endpoint.protocol==='https:'&&endpoint.hostname==='script.google.com'&&/^\/macros\/s\/[^/]+\/exec$/.test(endpoint.pathname)){
+    feedbackEndpoint=endpoint.href;
+    feedbackForm.action=feedbackEndpoint;
+  }
+}catch(e){}
+feedbackFile.addEventListener('change',()=>{
+  const file=feedbackFile.files[0];
+  $('#feedbackFileName').textContent=file?file.name:'Tambahkan screenshot (opsional)';
+});
+function setFeedbackStatus(message,isError){
+  feedbackStatus.hidden=false;
+  feedbackStatus.textContent=message;
+  feedbackStatus.dataset.state=isError?'error':'success';
+}
+function clearFeedbackPayload(){
+  feedbackForm.querySelectorAll('[data-feedback-payload]').forEach(field=>field.remove());
+}
+function createFeedbackPayload(name,value){
+  const field=document.createElement('input');
+  field.type='hidden';field.name=name;field.value=value;field.dataset.feedbackPayload='';
+  feedbackForm.appendChild(field);
+}
+function readScreenshot(file){
+  return new Promise((resolve,reject)=>{
+    const reader=new FileReader();
+    reader.addEventListener('load',()=>resolve(String(reader.result).split(',')[1]||''));
+    reader.addEventListener('error',()=>reject(new Error('Screenshot tidak dapat dibaca. Silakan pilih ulang file.')));
+    reader.readAsDataURL(file);
+  });
+}
+feedbackForm.addEventListener('submit',async event=>{
+  event.preventDefault();
+  if(feedbackPending)return;
+  if(!feedbackEndpoint){
+    setFeedbackStatus('Formulir belum terhubung. Pengelola perlu menyelesaikan konfigurasi pengiriman terlebih dahulu.',true);
+    return;
+  }
+  const file=feedbackFile.files[0];
+  if(file&&(!['image/png','image/jpeg','image/webp'].includes(file.type)||file.size>3*1024*1024)){
+    setFeedbackStatus('Pilih screenshot PNG, JPG, atau WebP dengan ukuran maksimal 3 MB.',true);
+    return;
+  }
+
+  feedbackPending=true;feedbackSubmit.disabled=true;
+  setFeedbackStatus('Mengirim masukan…',false);
+  clearFeedbackPayload();
+  try{
+    if(file){
+      createFeedbackPayload('screenshotData',await readScreenshot(file));
+      createFeedbackPayload('screenshotName',file.name);
+      createFeedbackPayload('screenshotType',file.type);
+    }
+    feedbackForm.submit();
+    clearTimeout(feedbackTimer);
+    feedbackTimer=setTimeout(()=>{
+      if(!feedbackPending)return;
+      feedbackPending=false;feedbackSubmit.disabled=false;clearFeedbackPayload();
+      setFeedbackStatus('Belum ada konfirmasi dari layanan email. Periksa koneksi, lalu coba kembali.',true);
+    },45000);
+  }catch(error){
+    feedbackPending=false;feedbackSubmit.disabled=false;clearFeedbackPayload();
+    setFeedbackStatus(error.message,true);
+  }
+});
+window.addEventListener('message',event=>{
+  if(event.source!==feedbackFrame.contentWindow)return;
+  if(event.origin!=='https://script.google.com'&&!event.origin.endsWith('.googleusercontent.com'))return;
+  if(!event.data||event.data.type!=='chromara-feedback-result')return;
+
+  clearTimeout(feedbackTimer);
+  feedbackPending=false;feedbackSubmit.disabled=false;clearFeedbackPayload();
+  setFeedbackStatus(String(event.data.message||'Pengiriman selesai.'),!event.data.ok);
+  if(event.data.ok){
+    feedbackForm.reset();
+    $('#feedbackFileName').textContent='Tambahkan screenshot (opsional)';
+  }
+});
+
 function editSel(h,s,l){const cur=hexToHsl(state.colors[state.sel].hex);setColor(state.sel,hslToHex(h===null?cur[0]:h,s===null?cur[1]:s,l===null?cur[2]:l));}
 $('#slH').addEventListener('input',e=>editSel(+e.target.value,null,null));
 $('#slS').addEventListener('input',e=>editSel(null,+e.target.value,null));
