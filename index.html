@@ -452,8 +452,10 @@
           <label for="feedbackContact">Email / Kontak</label>
           <input id="feedbackContact" name="contact" type="text" maxlength="160" placeholder="Isi jika ingin dihubungi kembali setelah masalah diperbaiki">
         </div>
-        <button class="btn btn-p feedback-submit" id="feedbackSubmit" type="submit">Kirim</button>
-        <p class="feedback-note">Pesan yang dikirim akan masuk langsung ke email pengelola.</p>
+        <div class="feedback-actions">
+          <button class="btn btn-p feedback-submit" id="feedbackSubmit" type="submit">Kirim</button>
+          <p class="feedback-note">Pesan yang dikirim akan masuk langsung ke email pengelola.</p>
+        </div>
         <p class="feedback-status" id="feedbackStatus" role="status" aria-live="polite" hidden></p>
       </form>
     </div>
