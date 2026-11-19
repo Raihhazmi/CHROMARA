@@ -428,6 +428,15 @@ input[type="color"]::-webkit-color-swatch{border:none;border-radius:6px}
 .svg-stage svg{width:100%;height:auto;border-radius:9px}
 .svg-note{font:500 11.5px var(--fm);color:var(--muted);margin-top:12px;text-align:center}
 
+.feedback-card{display:flex;align-items:center;justify-content:space-between;gap:32px;padding:clamp(24px,5vw,48px);background:linear-gradient(125deg,var(--surface),var(--bg2))}
+.feedback-copy{max-width:720px}
+.feedback-copy .sec-title{margin-top:12px}
+.feedback-email{margin-top:16px;color:var(--muted);font:500 12px var(--fm);overflow-wrap:anywhere}
+.feedback-email a{color:var(--accent);text-decoration:none}
+.feedback-email a:hover{text-decoration:underline}
+.feedback-btn{flex:none}
+.feedback-btn svg{width:17px;height:17px}
+
 footer{border-top:1px solid var(--border);padding:36px 0;background:var(--bg2);transition:background .5s}
 .foot-grid{display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap}
 .foot-motto{font:600 14px var(--fd);color:var(--heading)}
@@ -522,5 +531,7 @@ body{
   body{background-attachment:scroll}
   .ring-card{padding:20px}
   .foot-grid{align-items:flex-start}
+  .feedback-card{align-items:stretch;flex-direction:column;gap:22px}
+  .feedback-btn{width:100%}
 }
 .pv-frame .pv-page,.pv-frame .pv-page *{font-family:var(--pv-font,var(--fb))}

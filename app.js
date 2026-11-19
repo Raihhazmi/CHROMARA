@@ -872,7 +872,7 @@ function setupObservers(){
   if(!('IntersectionObserver' in window)){$$('.reveal').forEach(el=>el.classList.add('in'));return;}
   const nio=new IntersectionObserver(en=>{en.forEach(x=>{if(x.isIntersecting)
     $$('#navLinks .nl').forEach(a=>a.classList.toggle('active',a.dataset.sec===x.target.id));});},{rootMargin:'-40% 0px -55% 0px'});
-  ['studio','atlas','analisis','ekspor'].forEach(id=>{const s=document.getElementById(id);if(s)nio.observe(s);});
+  ['studio','atlas','analisis','ekspor','masukan'].forEach(id=>{const s=document.getElementById(id);if(s)nio.observe(s);});
   if(state.motion){
     const rio=new IntersectionObserver(en=>{en.forEach(x=>{if(x.isIntersecting){x.target.classList.add('in');rio.unobserve(x.target);}});},{threshold:.1});
     $$('.reveal').forEach(el=>rio.observe(el));
