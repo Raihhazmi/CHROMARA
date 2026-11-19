@@ -425,7 +425,7 @@
         <p class="sec-sub">Masukan Anda membantu kami membuat CHROMARA lebih baik. Pilih kategori dan ceritakan pengalaman Anda dengan singkat.</p>
       </header>
       <form class="feedback-form" id="feedbackForm" method="post" target="feedbackFrame" enctype="application/x-www-form-urlencoded">
-        <div class="feedback-field">
+        <div class="feedback-field feedback-category">
           <label for="feedbackCategory">Kategori</label>
           <select id="feedbackCategory" name="category" required>
             <option value="" selected disabled>Pilih kategori</option>
@@ -435,11 +435,11 @@
             <option value="Lainnya">Lainnya</option>
           </select>
         </div>
-        <div class="feedback-field">
+        <div class="feedback-field feedback-message-field">
           <label for="feedbackMessage">Pesan / Keluhan <span class="required-mark">Wajib</span></label>
           <textarea id="feedbackMessage" name="message" rows="5" maxlength="3000" placeholder="Ceritakan kekurangan, masalah, atau saran Anda…" required></textarea>
         </div>
-        <div class="feedback-field">
+        <div class="feedback-field feedback-upload-field">
           <span class="feedback-label">Upload Screenshot</span>
           <label class="feedback-dropzone" for="feedbackScreenshot">
             <input id="feedbackScreenshot" type="file" accept="image/png,image/jpeg,image/webp">
@@ -448,7 +448,7 @@
             <small>PNG, JPG, atau WebP · Maksimal 3 MB</small>
           </label>
         </div>
-        <div class="feedback-field">
+        <div class="feedback-field feedback-contact-field">
           <label for="feedbackContact">Email / Kontak</label>
           <input id="feedbackContact" name="contact" type="text" maxlength="160" placeholder="Isi jika ingin dihubungi kembali setelah masalah diperbaiki">
         </div>
