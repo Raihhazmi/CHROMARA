@@ -720,7 +720,7 @@ function renderExports(pv){
     '<text x="'+M+'" y="86" font-family="Space Grotesk, Arial, sans-serif" font-size="46" font-weight="700" letter-spacing="4" fill="'+pv.heading+'">CHROM<tspan fill="'+pv.accent+'">ARA</tspan></text>'+
     '<text x="'+M+'" y="122" font-family="JetBrains Mono, monospace" font-size="19" fill="'+pv.muted+'">'+N+' warna  ·  '+state.colors.map(c=>c.share).join(' · ')+'  ·  tema '+state.theme+'</text>'+cols+
     '<text x="'+M+'" y="'+(H-52)+'" font-family="JetBrains Mono, monospace" font-size="16" fill="'+pv.muted+'">60-30-10 → bebas · Studio Rasio Warna</text>'+
-    '<text x="'+(W-M)+'" y="'+(H-52)+'" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="16" fill="'+pv.link+'">CHROMARA.id</text></svg>';
+    '<text x="'+(W-M)+'" y="'+(H-52)+'" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="16" fill="'+pv.link+'">chromara.run.place</text></svg>';
   $('#expCode').textContent=expCache[expTab==='svg'?'css':expTab];
   $('#svgStage').innerHTML=expCache.svg;
   $('#expFile').textContent=EXP[expTab].f;
@@ -834,6 +834,7 @@ feedbackForm.addEventListener('submit',async event=>{
   setFeedbackStatus('Mengirim masukan…',false);
   clearFeedbackPayload();
   try{
+    createFeedbackPayload('responseOrigin',window.location.origin);
     if(file){
       createFeedbackPayload('screenshotData',await readScreenshot(file));
       createFeedbackPayload('screenshotName',file.name);

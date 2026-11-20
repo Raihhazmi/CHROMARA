@@ -1,6 +1,6 @@
 # Backend formulir Kritik & Saran
 
-Formulir ini menggunakan Google Apps Script untuk mengirim masukan ke Gmail pengelola dan meneruskan screenshot sebagai lampiran. Endpoint dibatasi ke 50 kiriman per hari dan menerima screenshot PNG, JPG, atau WebP hingga 3 MB.
+Formulir ini menggunakan Google Apps Script untuk mengirim masukan ke Gmail pengelola dan meneruskan screenshot sebagai lampiran. Endpoint dibatasi ke 50 kiriman per hari dan menerima screenshot PNG, JPG, atau WebP hingga 3 MB. Konfirmasi pengiriman menerima situs utama `https://chromara.run.place` dan URL Pages lama `https://raihhazmi.github.io`.
 
 Sebelum URL Web app dipasang di `feedback-config.js`, situs akan menolak pengiriman dan menampilkan bahwa formulir belum terhubung. Ini mencegah pesan tampak terkirim padahal belum diteruskan.
 
@@ -15,3 +15,7 @@ Sebelum URL Web app dipasang di `feedback-config.js`, situs akan menolak pengiri
 7. Publikasikan perubahan situs. Uji satu kiriman teks, lalu satu kiriman dengan screenshot.
 
 URL endpoint bersifat publik. Script hanya dapat mengirim ke alamat tetap pengelola, memvalidasi kategori dan isi, membatasi ukuran file, serta menghentikan kiriman setelah kuota harian tercapai. Jangan menaruh token rahasia di `feedback-config.js`.
+
+## Memperbarui deployment setelah perubahan kode
+
+Jika isi `Code.gs` berubah, buka **Deploy > Manage deployments**, edit deployment Web app yang aktif, pilih **New version**, lalu tekan **Deploy**. URL `/exec` tetap sama. Perubahan origin konfirmasi diperlukan agar status pengiriman formulir bekerja pada domain utama yang baru.
