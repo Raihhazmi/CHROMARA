@@ -245,8 +245,19 @@ function clampRoles(){ROLE_KEYS.forEach(k=>state.roles[k]=clamp(state.roles[k]|0
 function presetShares(kind,N){
   if(kind==='balanced')return allocRound(Array(N).fill(1),100);
   if(kind==='pyramid')return allocRound(Array.from({length:N},(_,i)=>Math.pow(2,N-1-i)),100);
-  if(kind==='accent'){const w=[10].concat(Array.from({length:N-1},(_,i)=>i===0?3:1));return allocRound(w,100);}
+  if(kind==='accent'){
+    const rest=Math.max(0,N-2);
+    const w=[55,25].concat(Array(rest).fill(20/Math.max(1,rest)));
+    return allocRound(w,100);
+  }
   if(kind==='duo'){const w=Array(N).fill(0);w[0]=1;w[1]=1;return allocRound(w,100);}
+  if(kind==='classic'){
+    if(N===2)return [60,40];
+    const remainder=40,rest=N-1;
+    const weights=Array.from({length:rest},(_,i)=>Math.pow(2,rest-1-i));
+    const parts=allocRound(weights,remainder);
+    return [60].concat(parts);
+  }
   const w=[9].concat(Array.from({length:N-1},(_,i)=>Math.max(1,4-i)));return allocRound(w,100);
 }
 function applyPreset(kind){
@@ -951,6 +962,22 @@ $$('#expTabs .exp-tab').forEach(b=>b.addEventListener('click',()=>{expTab=b.data
   $$('#expTabs .exp-tab').forEach(x=>x.setAttribute('aria-selected',String(x===b)));requestUpdate();}));
 $('#expCopy').addEventListener('click',()=>copyText(expCache[expTab],'Tersalin ke clipboard!'));
 $('#expDown').addEventListener('click',()=>download(EXP[expTab].f,expCache[expTab],EXP[expTab].m));
+$('#expShare').addEventListener('click',async()=>{
+  const payload={
+    v:1,
+    theme:state.theme,
+    colors:state.colors.map(c=>({n:c.name,h:c.hex,s:c.share}))
+  };
+  const url=new URL(window.location.href);
+  url.hash='palet='+encodeURIComponent(JSON.stringify(payload));
+  history.replaceState(null,'',url);
+  try{
+    await navigator.clipboard.writeText(url.href);
+    toast('Tautan palet disalin!','ok');
+  }catch(e){
+    copyText(url.href,'Tautan palet disalin!');
+  }
+});
 window.addEventListener('pagehide',save);
 
 function setupObservers(){
@@ -963,6 +990,31 @@ function setupObservers(){
     $$('.reveal').forEach(el=>rio.observe(el));
   }else $$('.reveal').forEach(el=>el.classList.add('in'));
 }
+if(location.hash.startsWith('#palet=')){
+  try{
+    const payload=JSON.parse(decodeURIComponent(location.hash.slice(7)));
+    if(payload&&payload.v===1&&Array.isArray(payload.colors)){
+      const colors=payload.colors.slice(0,MAX).filter(c=>c&&validHex(c.h)).map((c,i)=>({
+        id:uid(),
+        name:String(c.n||('Warna '+(i+1))).slice(0,24),
+        hex:normHex(c.h),
+        share:clamp(Math.round(Number(c.s)||0),0,100),
+        lock:false
+      }));
+      if(colors.length>=MIN){
+        state.colors=colors;
+        state.sel=0;
+        state.theme=payload.theme==='light'?'light':'dark';
+        rebalanceAll();
+        if(state.autoRoles)autoAssignRoles();
+        toast('Palet bersama berhasil dimuat.','ok');
+      }
+    }
+  }catch(e){
+    toast('Tautan palet tidak dapat dibaca.','warn');
+  }
+}
+
 buildCats();
 $('#libSearch').value=state.lib.q;
 rebuildDynamic();
